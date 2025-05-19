@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор среднего балла</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        /* Стили для нового "заголовка" - результата */
+        .result-header {
+            font-size: 3em; /* Размер побольше, как у заголовка */
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px; /* Отступ снизу до контролов */
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap; /* Для лучшей адаптивности контролов */
+        }
+        .controls label {
+            font-weight: bold;
+        }
+        .controls input[type="number"],
+        .controls select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .add-button, .remove-button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .add-button:hover {
+            background-color: #4cae4c;
+        }
+        .remove-button {
+            background-color: #d9534f;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+        .remove-button:hover {
+            background-color: #c9302c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .action-cell {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="result-header" id="averageGrade">-</div>
+
+        <div class="controls">
+            <label for="grade">Оценка:</label>
+            <select id="grade">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+            </select>
+
+            <label for="weight">Вес:</label>
+            <select id="weight">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+            </select>
+
+            <button class="add-button" onclick="addRow()">+</button>
+        </div>
+
+        <table id="gradesTable">
+            <thead>
+                <tr>
+                    <th>Оценка</th>
+                    <th>Вес</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+
+        </div>
+
+    <script>
+        function addRow() {
+            const gradeSelect = document.getElementById('grade');
+            const weightSelect = document.getElementById('weight');
+            const tableBody = document.getElementById('gradesTable').getElementsByTagName('tbody')[0];
+
+            const grade = parseInt(gradeSelect.value);
+            const weight = parseInt(weightSelect.value);
+
+            const newRow = tableBody.insertRow();
+
+            const gradeCell = newRow.insertCell(0);
+            const weightCell = newRow.insertCell(1);
+            const actionCell = newRow.insertCell(2);
+
+            gradeCell.innerHTML = grade;
+            weightCell.innerHTML = weight;
+            actionCell.innerHTML = '<button class="remove-button" onclick="deleteRow(this)">-</button>';
+            actionCell.classList.add('action-cell');
+
+            calculateAverage();
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            calculateAverage();
+        }
+
+        function calculateAverage() {
+            const tableBody = document.getElementById('gradesTable').getElementsByTagName('tbody')[0];
+            const rows = tableBody.rows;
+            let totalWeightedSum = 0;
+            let totalWeight = 0;
+            const averageGradeDiv = document.getElementById('averageGrade'); // Получаем элемент один раз
+
+            if (rows.length === 0) {
+                averageGradeDiv.innerHTML = '-';
+                return;
+            }
+
+            for (let i = 0; i < rows.length; i++) {
+                const grade = parseInt(rows[i].cells[0].innerHTML);
+                const weight = parseInt(rows[i].cells[1].innerHTML);
+                totalWeightedSum += grade * weight;
+                totalWeight += weight;
+            }
+
+            if (totalWeight === 0) {
+                averageGradeDiv.innerHTML = 'нет весов';
+                return;
+            }
+
+            const average = totalWeightedSum / totalWeight;
+            averageGradeDiv.innerHTML = `${average.toFixed(2)}`;
+        }
+
+        // Инициализация при загрузке страницы
+        calculateAverage();
+    </script>
+
+</body>
+</html>
+
