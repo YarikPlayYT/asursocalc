@@ -16,21 +16,29 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            margin: auto;
         }
-        /* Стили для нового "заголовка" - результата */
         .result-header {
-            font-size: 3em; /* Размер побольше, как у заголовка */
+            font-size: 3em;
             font-weight: bold;
             text-align: center;
             color: #333;
-            margin-bottom: 20px; /* Отступ снизу до контролов */
+            margin-bottom: 10px;
+        }
+        .final-grade-header {
+            font-size: 1em;
+            font-weight: normal;
+            text-align: center;
+            color: #777;
+            margin-bottom: 20px;
         }
         .controls {
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap; /* Для лучшей адаптивности контролов */
+            flex-wrap: wrap;
         }
         .controls label {
             font-weight: bold;
@@ -92,6 +100,7 @@
 
     <div class="container">
         <div class="result-header" id="averageGrade">-</div>
+        <div class="final-grade-header" id="finalGrade">Итоговая: -</div>
 
         <div class="controls">
             <label for="grade">Оценка:</label>
@@ -163,10 +172,13 @@
             const rows = tableBody.rows;
             let totalWeightedSum = 0;
             let totalWeight = 0;
-            const averageGradeDiv = document.getElementById('averageGrade'); // Получаем элемент один раз
+            
+            const averageGradeDiv = document.getElementById('averageGrade');
+            const finalGradeDiv = document.getElementById('finalGrade'); 
 
             if (rows.length === 0) {
                 averageGradeDiv.innerHTML = '-';
+                finalGradeDiv.innerHTML = 'Итоговая: -'; // Сброс итоговой оценки
                 return;
             }
 
@@ -179,17 +191,28 @@
 
             if (totalWeight === 0) {
                 averageGradeDiv.innerHTML = 'нет весов';
+                finalGradeDiv.innerHTML = 'Итоговая: -';
                 return;
             }
 
             const average = totalWeightedSum / totalWeight;
             averageGradeDiv.innerHTML = `${average.toFixed(2)}`;
+
+            let finalGradeText;
+            if (average > 4.55) {
+                finalGradeText = 5;
+            } else if (average > 3.5) {
+                finalGradeText = 4;
+            } else if (average > 2.5) {
+                finalGradeText = 3;
+            } else {
+                finalGradeText = 2;
+            }
+            finalGradeDiv.innerHTML = `Итоговая: ${finalGradeText}`;
         }
 
-        // Инициализация при загрузке страницы
         calculateAverage();
     </script>
 
 </body>
 </html>
-
